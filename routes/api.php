@@ -23,4 +23,7 @@ Route::apiResource('question-options', QuestionOptionController::class);
 Route::apiResource('exam-attempts', ExamAttemptController::class);
 Route::apiResource('exam-answers', ExamAnswerController::class);
 
+Route::post('/questions/reorder', [QuestionController::class, 'reorder'])->name('api.questions.reorder');
+
+
 Route::post('/import-exam', [ExamController::class, 'import']);

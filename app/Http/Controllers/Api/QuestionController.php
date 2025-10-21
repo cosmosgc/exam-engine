@@ -41,13 +41,61 @@ class QuestionController extends Controller
         $data = $request->validate([
             'text' => 'sometimes|required|string',
             'type' => 'sometimes|required|in:multiple_choice,written,true_false,matching,audio_response',
-            'correct_answer' => 'nullable|string',
+            'options' => 'array',
+            'options.*.id' => 'nullable|integer|exists:question_options,id',
+            'options.*.text' => 'required|string',
+            'options.*.is_correct' => 'boolean'
         ]);
 
-        $question->update($data);
+        // 1️⃣ Sync question options and extract the correct one
+        $correctAnswerText = null;
 
-        return response()->json($question);
+        if (isset($data['options'])) {
+            $existingOptionIds = $question->options()->pluck('id')->toArray();
+            $incomingOptionIds = collect($data['options'])->pluck('id')->filter()->toArray();
+
+            // Delete removed options
+            $toDelete = array_diff($existingOptionIds, $incomingOptionIds);
+            if (!empty($toDelete)) {
+                \App\Models\QuestionOption::destroy($toDelete);
+            }
+
+            // Update or create options
+            foreach ($data['options'] as $opt) {
+                if (!empty($opt['id'])) {
+                    // Update existing option
+                    \App\Models\QuestionOption::where('id', $opt['id'])->update([
+                        'text' => $opt['text'],
+                    ]);
+                } else {
+                    // Create new option
+                    $question->options()->create([
+                        'text' => $opt['text'],
+                    ]);
+                }
+
+                // If this option is correct, capture its text
+                if (!empty($opt['is_correct']) && $opt['is_correct'] === true) {
+                    $correctAnswerText = $opt['text'];
+                }
+            }
+        }
+
+        // 2️⃣ Update the question itself
+        $question->update([
+            'text' => $data['text'] ?? $question->text,
+            'type' => $data['type'] ?? $question->type,
+            'correct_answer' => $correctAnswerText ?? $question->correct_answer,
+        ]);
+
+        // 3️⃣ Return updated question with options
+        return response()->json(
+            $question->load('options')
+        );
     }
+
+
+
 
     // DELETE /api/questions/{question}
     public function destroy(Question $question)
@@ -55,4 +103,20 @@ class QuestionController extends Controller
         $question->delete();
         return response()->noContent();
     }
+
+    public function reorder(Request $request)
+    {
+        $data = $request->validate([
+            'order' => 'required|array',
+            'order.*.id' => 'required|integer|exists:questions,id',
+            'order.*.order' => 'required|integer',
+        ]);
+
+        foreach ($data['order'] as $item) {
+            Question::where('id', $item['id'])->update(['order' => $item['order']]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
 }

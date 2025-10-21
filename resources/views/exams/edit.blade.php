@@ -178,24 +178,26 @@
                 question.options.forEach(option => {
                     // Determine if this option should be checked
                     const isChecked = option.text === question.correct_answer;
-                    addOptionInput(option.text, isChecked, option.id);
+                    addOptionInput(option.text, isChecked, option.id, option.label);
                 });
             });
 
         });
 
         // 🟩 Helper: Add option input row
-        function addOptionInput(text = '', isCorrect = false, optionId = null) {
+        function addOptionInput(text = '', isCorrect = false, optionId = null, label = '') {
             const div = document.createElement('div');
-            div.className = 'flex items-center space-x-2';
+            div.className = 'flex items-center space-x-2 option-row';
             div.innerHTML = `
                 <input type="hidden" class="option-id" value="${optionId || ''}">
+                <input type="text" class="option-label p-2 border rounded dark:bg-gray-900 dark:border-gray-700" value="${label}">
+
                 <input type="text" class="option-text w-full p-2 border rounded dark:bg-gray-900 dark:border-gray-700" value="${text}" placeholder="Option text">
                 <label class="flex items-center space-x-1">
                     <input type="checkbox" class="option-correct" ${isCorrect ? 'checked' : ''}>
                     <span class="text-sm">Correct</span>
                 </label>
-                <button type="button" class="text-red-500 remove-option">✕</button>
+                <button type="button" class="remove-option text-red-500">✕</button>
             `;
             div.querySelector('.remove-option').addEventListener('click', () => div.remove());
             optionsContainer.appendChild(div);
@@ -212,24 +214,26 @@
             const options = Array.from(optionsContainer.children).map(opt => ({
                 id: opt.querySelector('.option-id').value || null,
                 text: opt.querySelector('.option-text').value,
+                label: opt.querySelector('.option-label')?.value || '', // include label
                 is_correct: opt.querySelector('.option-correct').checked
             }));
-            const correct_answer = document.querySelector('input[name="option-correct"]:checked')?.value || '';            // Blade renders this into something like "/questions/:id/edit"
-            const baseEditUrl = `{{ route('questions.update', ':id') }}`;
 
-            // Later in JS, when you have questionId:
+            // Extract correct_answer
+            const correct_answer = options.find(o => o.is_correct)?.text || '';
+
+            const baseEditUrl = `{{ route('questions.update', ':id') }}`;
             const url = baseEditUrl.replace(':id', questionId);
+
             await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken
                 },
-                body: JSON.stringify({ text, correct_answer,options })
+                body: JSON.stringify({ text, options, correct_answer })
             });
 
             closeModal();
-            // location.reload(); // refresh list after saving
         });
     </script>
 

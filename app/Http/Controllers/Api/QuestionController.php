@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Question;
 use Illuminate\Http\Request;
 
+use function PHPUnit\Framework\isNull;
+
 class QuestionController extends Controller
 {
     // GET /api/questions
@@ -44,9 +46,9 @@ class QuestionController extends Controller
             'options' => 'array',
             'options.*.id' => 'nullable|integer|exists:question_options,id',
             'options.*.text' => 'required|string',
+            'options.*.label' => 'required|string',
             'options.*.is_correct' => 'boolean'
         ]);
-
         // 1️⃣ Sync question options and extract the correct one
         $correctAnswerText = null;
 
@@ -62,7 +64,7 @@ class QuestionController extends Controller
 
             // Update or create options
             foreach ($data['options'] as $opt) {
-                if (!empty($opt['id'])) {
+                if (!empty($opt['id']) || !isNull($opt['id'])) {
                     // Update existing option
                     \App\Models\QuestionOption::where('id', $opt['id'])->update([
                         'text' => $opt['text'],
@@ -71,6 +73,7 @@ class QuestionController extends Controller
                     // Create new option
                     $question->options()->create([
                         'text' => $opt['text'],
+                        'label' => $opt['label']
                     ]);
                 }
 

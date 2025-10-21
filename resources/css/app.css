@@ -1,3 +1,241 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Option text input */
+.option-text {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.option-text:focus {
+    outline: none;
+    border-color: #3b82f6; /* Tailwind's blue-500 */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+/* Correct answer checkbox/radio */
+.option-correct {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: #22c55e; /* Tailwind green-500 */
+    cursor: pointer;
+    transform: scale(1.1);
+    margin-right: 0.5rem;
+}
+
+.option-correct:checked {
+    box-shadow: 0 0 4px 1px rgba(34, 197, 94, 0.5);
+}
+
+/* Remove option button */
+.remove-option {
+    background-color: #ef4444; /* Tailwind red-500 */
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.remove-option:hover {
+    background-color: #dc2626; /* Tailwind red-600 */
+}
+
+/* Fix for Tailwind text-red-500 if it's not applying */
+.text-red-500 {
+    color: #ef4444 !important;
+}
+/* ===== Modal Overlay ===== */
+/* ===== Modal Overlay ===== */
+#questionModal {
+    /*display: none; /* hidden by default */
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 50;
+    backdrop-filter: blur(4px);
+}
+
+/* ===== Modal Box ===== */
+#questionModal > div {
+    background-color: #111827; /* dark slate */
+    color: #f9fafb; /* near-white */
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8);
+    width: 100%;
+    max-width: 36rem;
+    position: relative;
+    animation: modalSlideUp 0.3s ease-out;
+    border: 1px solid #1f2937; /* soft border */
+}
+
+/* ===== Modal Animation ===== */
+@keyframes modalSlideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ===== Modal Header ===== */
+#questionModal h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #e5e7eb;
+}
+
+/* ===== Form Labels & Inputs ===== */
+#questionForm label {
+    font-weight: 500;
+    color: #d1d5db;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+#questionForm textarea {
+    width: 100%;
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    background-color: #1f2937;
+    color: #f9fafb;
+    font-size: 0.95rem;
+    resize: vertical;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#questionForm textarea:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+    outline: none;
+}
+
+/* ===== Option Row ===== */
+.option-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
+/* ===== Option Input ===== */
+.option-text {
+    flex: 1;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #374151;
+    border-radius: 0.4rem;
+    background-color: #111827;
+    color: #f3f4f6;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.option-text:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+    outline: none;
+}
+
+/* ===== Correct Answer Radio ===== */
+.option-correct {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: #22c55e; /* green-500 */
+    cursor: pointer;
+    transform: scale(1.1);
+    margin-right: 0.25rem;
+}
+.option-correct:checked {
+    box-shadow: 0 0 6px 1px rgba(34, 197, 94, 0.6);
+}
+
+/* ===== Remove Option Button ===== */
+.remove-option {
+    background-color: #b91c1c; /* red-700 */
+    color: #fff;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.remove-option:hover {
+    background-color: #dc2626; /* red-600 */
+    transform: scale(1.05);
+}
+
+/* ===== Tailwind Red Fix ===== */
+.text-red-500 {
+    color: #ef4444 !important;
+}
+
+/* ===== Add Option Button ===== */
+#addOptionBtn {
+    display: inline-block;
+    color: #3b82f6;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+#addOptionBtn:hover {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* ===== Modal Footer Buttons ===== */
+#questionForm button[type="submit"],
+#closeModal {
+    font-size: 0.95rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+#questionForm button[type="submit"] {
+    background-color: #2563eb;
+    color: white;
+}
+#questionForm button[type="submit"]:hover {
+    background-color: #1d4ed8;
+    transform: scale(1.03);
+}
+
+#closeModal {
+    background-color: #374151;
+    color: #f3f4f6;
+}
+#closeModal:hover {
+    background-color: #4b5563;
+    transform: scale(1.03);
+}
+
+/* ===== Scrollbar inside modal (if overflow) ===== */
+#questionModal > div::-webkit-scrollbar {
+    width: 8px;
+}
+#questionModal > div::-webkit-scrollbar-thumb {
+    background-color: #374151;
+    border-radius: 4px;
+}
+#questionModal > div::-webkit-scrollbar-thumb:hover {
+    background-color: #4b5563;
+}

@@ -22,14 +22,54 @@ class QuestionController extends Controller
         $data = $request->validate([
             'exam_id' => 'required|exists:exams,id',
             'text' => 'required|string',
-            'type' => 'required|in:multiple_choice,written,true_false,matching,audio_response',
-            'correct_answer' => 'nullable|string',
+            'type' => 'sometimes|in:multiple_choice,written,true_false,matching,audio_response',
+            'options' => 'array',
+            'options.*.id' => 'nullable|integer|exists:question_options,id',
+            'options.*.text' => 'required|string',
+            'options.*.label' => 'required|string',
+            'options.*.is_correct' => 'boolean'
         ]);
 
-        $question = Question::create($data);
+        // Default type if not provided
+        $data['type'] = $data['type'] ?? 'multiple_choice';
 
-        return response()->json($question, 201);
+        // Create the question
+        $question = \App\Models\Question::create([
+            'exam_id' => $data['exam_id'],
+            'text' => $data['text'],
+            'type' => $data['type'],
+        ]);
+
+        // 1️⃣ Handle options
+        $correctAnswerText = null;
+
+        if (isset($data['options'])) {
+            foreach ($data['options'] as $opt) {
+                $option = $question->options()->create([
+                    'text' => $opt['text'],
+                    'label' => $opt['label'],
+                    'is_correct' => $opt['is_correct'] ?? false,
+                ]);
+
+                if (!empty($opt['is_correct']) && $opt['is_correct'] === true) {
+                    $correctAnswerText = $opt['text'];
+                }
+            }
+        }
+
+        // 2️⃣ Update the question with the correct answer if exists
+        if ($correctAnswerText !== null) {
+            $question->update(['correct_answer' => $correctAnswerText]);
+        }
+
+        // 3️⃣ Return full question with options
+        return response()->json(
+            $question->load('options'),
+            201
+        );
     }
+
+
 
     // GET /api/questions/{question}
     public function show(Question $question)

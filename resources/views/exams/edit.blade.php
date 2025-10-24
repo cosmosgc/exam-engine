@@ -89,6 +89,11 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
 
+        const questionEditor = new Quill('#questionEditor', {
+            theme: 'snow',
+            placeholder: 'Write the question here...',
+        });
+
         const questionList = document.getElementById('questionList');
         const modal = document.getElementById('questionModal');
         const closeModalBtn = document.getElementById('closeModal');

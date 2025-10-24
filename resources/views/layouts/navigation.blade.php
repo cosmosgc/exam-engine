@@ -16,6 +16,14 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+                
+                {{-- Questions --}}
+                <x-nav-link :href="route('examPage')" :active="request()->routeIs('exams.*')">
+                    <i class="fa-solid fa-question-circle mr-1"></i>
+                    {{ __('Exams') }}
+                </x-nav-link>
+
+
             </div>
 
             <!-- Settings Dropdown -->

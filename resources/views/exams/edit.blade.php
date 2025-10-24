@@ -21,7 +21,7 @@
                     </div>
 
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update Exam</button>
-                    <a href="{{ route('exams.index') }}" class="ml-2 text-gray-600 dark:text-gray-300 hover:underline">Cancel</a>
+                    <a href="{{ route('examPage') }}" class="ml-2 text-gray-600 dark:text-gray-300 hover:underline">Cancel</a>
                 </form>
 
                 <h3 class="text-lg font-semibold mb-3">Questions</h3>
